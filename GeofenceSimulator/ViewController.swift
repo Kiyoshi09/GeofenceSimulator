@@ -23,7 +23,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     var tapCnt = 0
     
-    // ターゲット地点 (東京タワー)
+    // ターゲット地点 (東京タワー 2)
     let geo1lat = CLLocationDegrees(35.658580)
     let geo1lon = CLLocationDegrees(139.745433)
     
