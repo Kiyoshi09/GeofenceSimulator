@@ -21,14 +21,23 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     var imgNames: [String] = ["koara2","rakuPanda2","richardEye"]
     var imgName = "koara2"
     
+    //var tapCnt = 2 // 意図的に 2 にしておく (最初はアイコンを変更する挙動に変更したいため)
     var tapCnt = 0
     
-    // ターゲット地点 (東京タワー 2)
+    // ターゲット地点 (東京タワー)
+    /*
     let geo1lat = CLLocationDegrees(35.658580)
     let geo1lon = CLLocationDegrees(139.745433)
+    */
+    // Sydney Tower Eye
+    let geo1lat = CLLocationDegrees(-33.872604)
+    let geo1lon = CLLocationDegrees(151.208123)
     
     // 最初の位置
-    var originalLoc: CLLocationCoordinate2D?
+    //var originalLoc: CLLocationCoordinate2D?
+    // Starting point (Sydney Opera house)
+    let startlat = CLLocationDegrees(-33.857168)
+    let startlon = CLLocationDegrees(151.215582)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,10 +53,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 //        // ターゲット地点
 //        let latitude = CLLocationDegrees(35.658580)
 //        let longitude = CLLocationDegrees(139.745433)
-        let center = CLLocationCoordinate2DMake(geo1lat, geo1lon)
+        //let center = CLLocationCoordinate2DMake(geo1lat, geo1lon)
 
         //moveTo(center: center, animated: true, span: 0.1)
-        moveTo(center: center, animated: true)
+        //moveTo(center: center, animated: true)
 
         // Tap ジェスチャーの追加
         addTapGestureRecognizer()
@@ -182,29 +191,30 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 
         print("mapView viewFor ... gesture")
         
-//        guard annotation as? MKUserLocation != mapView.userLocation else {
-//            return nil
-//        }
-//
-//        let identifier = "annotation"
-//        if let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView {
-//            annotationView.annotation = annotation
-//            annotationView.animatesDrop = true
-//
-//            return annotationView
-//        }
-//        else {
-//            let annotationView = MKPinAnnotationView(
-//                annotation: annotation,
-//                reuseIdentifier: identifier
-//            )
-//
-//            annotationView.animatesDrop = true
-//            annotationView.pinTintColor = .orange
-//
-//            return annotationView
-//        }
+        guard annotation as? MKUserLocation != mapView.userLocation else {
+            return nil
+        }
+
+        let identifier = "annotation"
+        if let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView {
+            annotationView.annotation = annotation
+            annotationView.animatesDrop = true
+
+            return annotationView
+        }
+        else {
+            let annotationView = MKPinAnnotationView(
+                annotation: annotation,
+                reuseIdentifier: identifier
+            )
+
+            annotationView.animatesDrop = true
+            annotationView.pinTintColor = .orange
+
+            return annotationView
+        }
         
+        /* Animation Pointer
         let identifier = "annotation"
         if let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKPinAnnotationView {
 
@@ -249,6 +259,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
 
             }
         }
+         */
     }
     
     private func moveTo(center location: CLLocationCoordinate2D,animated: Bool,span: CLLocationDegrees = 0.01) {
@@ -301,16 +312,21 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             
             print("[KiyoDebug][Origin] Physical location")
             
-            if let c = _location?.coordinate {
-                //self.moveTo(center: c, animated: true, span: 0.1)
-                self.moveTo(center: c, animated: true)
-                print("[KiyoDebug][Origin] Physical location")
-            }
-            else{
-                let testC = CLLocationCoordinate2DMake(35.6572216, 139.7698057)
-                self.moveTo(center: testC, animated: true)
-                print("[KiyoDebug][Origin] Virtual location")
-            }
+//            if let c = _location?.coordinate {
+//                //self.moveTo(center: c, animated: true, span: 0.1)
+//                self.moveTo(center: c, animated: true)
+//                print("[KiyoDebug][Origin] Physical location")
+//            }
+//            else{
+//               // let testC = CLLocationCoordinate2DMake(35.6572216, 139.7698057)
+//                let testC = CLLocationCoordinate2DMake(35.6572173, 139.7698004)
+//                self.moveTo(center: testC, animated: true)
+//                print("[KiyoDebug][Origin] Virtual location")
+//            }
+            
+            let testC = CLLocationCoordinate2DMake(startlat, startlon)
+            self.moveTo(center: testC, animated: true)
+            print("[KiyoDebug][Origin] Virtual location")
             
             self.flag = 1
             
@@ -322,37 +338,37 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
             break
         }
         
-
-        if tapCnt >= 3 {
-            nImg = (nImg + 1) % 3
-            imgName = imgNames[nImg]
-            
-            print("[gesture] imangeName : \(imgName)");
-            
-            mapView.annotations.forEach { annotation in
-                
-                //            if !annotation.isEqual(mapView.userLocation) {
-                //                let newAnnotation = MKPointAnnotation()
-                //                newAnnotation.coordinate = annotation.coordinate
-                //                mapView.addAnnotation(newAnnotation)
-                //
-                //                mapView.removeAnnotation(annotation)
-                //
-                //            }
-                
-                let view = mapView.view(for: annotation)
-                if view?.annotation is MKUserLocation {
-                    view?.image = UIImage(named: imgName)
-                }
-            }
-        }
+          // Animation pointer
+//        if tapCnt >= 3 {
+//            nImg = (nImg + 1) % 3
+//            imgName = imgNames[nImg]
+//
+//            print("[gesture] imangeName : \(imgName)");
+//
+//            mapView.annotations.forEach { annotation in
+//
+//                //            if !annotation.isEqual(mapView.userLocation) {
+//                //                let newAnnotation = MKPointAnnotation()
+//                //                newAnnotation.coordinate = annotation.coordinate
+//                //                mapView.addAnnotation(newAnnotation)
+//                //
+//                //                mapView.removeAnnotation(annotation)
+//                //
+//                //            }
+//
+//                let view = mapView.view(for: annotation)
+//                if view?.annotation is MKUserLocation {
+//                    view?.image = UIImage(named: imgName)
+//                }
+//            }
+//        }
     }
     
     
     @IBAction func longPressMap(_ sender: UILongPressGestureRecognizer) {
         
         if sender.state == UIGestureRecognizer.State.ended {
-            tapCnt = 1;
+            tapCnt = 0;
             
             let center = CLLocationCoordinate2DMake(geo1lat, geo1lon)
             moveTo(center: center, animated: true)
